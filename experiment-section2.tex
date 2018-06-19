@@ -1,0 +1,991 @@
+\documentclass{jarticle}
+
+\usepackage[top=30truemm, bottom=30truemm, left=30truemm, right=30truemm]{geometry}
+\usepackage[dvipdfmx]{graphicx}
+\usepackage{wrapfig}
+\usepackage{here}
+\usepackage{url}
+
+\begin{document}
+\section{実験1}
+\subsection{目的}
+制御対象であるDCサーボモータの周波数応答を測定して、その結果から伝達関数を同定することが目的である。
+\subsection{原理}
+まず、測定の際の位相差の導出についてだが、位相差は入出力波形の時間差から求められ、
+\begin{equation}
+位相差[度]=時間差[s]×周波数[1/s]×360[度]
+\end{equation}
+の式で導くことが出来る。\\
+　次に、タコジェネレータについてだが、これはDCサーボモータの回転軸に直結しているモーターと同じ機構を持つ機器である。これより、タコジェネレータの回転速度がDCサーボモータと同じであるので、その回転速度を$\omega(t)$とし、タコジェネレータの検出信号(電機子端子間に誘起される起電力)を$y_{dv}(t)$とすると、
+\begin{equation}
+y_{dv}(t)=k_{E}'\omega(t)
+\label{eq tako}
+\end{equation}
+のような式が成立する。ここで、タコジェネレータについての逆起電力定数を$k_{E}'$とした。従って、式(\ref{eq tako})より、タコジェネレータは、回転速度を電圧に変換したものが検出信号になる検出器であり、速度制御に用いられる。\\
+　加えて、ポテンショメータについてだが、これは電機子の回転軸とカップリングを用いて接続して使用する位置制御に使う機器である。これにより、回転角$\theta(t)$を電圧に変換したものが検出信号として得られる。ここで、ポテンショメータの検出信号(端子に現れる起電力)を$y_{dp}(t)$とし、ポテンショメータの構造などで決まる定数を$k_{P}$とすると
+\begin{equation}
+y_{dp}(t)=k_{P}\theta(t)
+\label{eq pote}
+\end{equation}
+が成り立つ。なお、1回転ポテンショメータは360度回転するごとに電圧がリセットされる素子で、ポテンショメータへの印加電圧の最小値から最大値までが、各々0度から360度に一対一対応されることに注意する。\\
+　ここまでで、速度制御と位置制御で使う機器の話をした。この次に、それぞれの制御の伝達関数について触れる。今回の実験では、操作器,DCサーボモータ,検出器を一括して一つの伝達関数P(s)として扱うため、速度制御にしても位置制御にしても以下の図\ref{fig ex1block}のようなブロック線図となる。なお、$k_{Y}$は速度制御なら$k_{E}'$で位置制御なら$k_{P}$であり、C(s)は制御用アナログ回路の伝達関数、P(s)は制御対象の伝達関数である。また、簡単のため外乱やノイズなどは無視している。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=8cm]{ex1block.png}
+		\caption{一般的なフィードバック制御系のブロック線図}
+		\label{fig ex1block}
+	\end{center}
+\end{figure}
+この時、速度制御に対応する制御対象の伝達関数$P_{V}(s)$は、
+\begin{equation}
+P_{V}(s)=\frac{k_{A}k_{E}'/k_{E}}{(1+sT_{E})(1+sT_{M})}=\frac{K}{(1+sT_{E})(1+sT_{M})}
+\label{eq Pvs}
+\end{equation}
+となる。また、位置制御に対応する制御対象の伝達関数$P(s)$は、
+\begin{equation}
+P(s)=\frac{k_{A}k_{P}/k_{E}}{s(1+sT_{E})(1+sT_{M})}=\frac{K×\frac{k_{P}}{k_{E}'}}{s(1+sT_{E})(1+sT_{M})}
+\label{eq Ps}
+\end{equation}
+になる。ここで、$k_{A}$は操作器に関する比例定数、$k_{E}$は電機子に関する逆起電力定数、$T_{E}$は電気的時定数、$T_{M}$は機械的時定数であり、$K=\frac{k_{A}k_{E}'}{k_{E}}$とした。なお、
+\begin{equation}
+T_{E}\ll T_{M}
+\label{eq TeTm}
+\end{equation}
+である。加えて、位置制御と速度制御には制御対象の伝達関数について以下の関係が成立する。
+\begin{equation}
+P(s)=\frac{k_{P}}{sk_{E}'}P_{V}(s)
+\label{eq P-Pv}
+\end{equation}
+
+\subsection{方法}
+\subsubsection{実験1-1}
+\begin{enumerate}
+\item まず、速度出力について測定するためタコジェネレータを用いて、図\ref{fig ex1-1circuit}のように装置を構成した。なお、直流電源(大)の電圧はDCサーボモータの定格電圧24Vにして、ファンクションジェネレータ(FG)からは正弦波を与えた。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=9cm]{ex1-1circuit.png}
+		\caption{実験1-1の装置構成図}
+		\label{fig ex1-1circuit}
+	\end{center}
+\end{figure}
+\item 次に、オシロスコープのCH1、CH2プローブをそれぞれ図\ref{fig ex1-1circuit}のように接続した。
+\item 最後に、FGの周波数を対数軸上で等間隔になるように0.2Hz～100Hzの間で20点選び、加えて、その各々の周波数について振幅を3つ選びながら各々の場合について、CH1、CH2両方のpeak to peak電圧とその時間差を測定し、Gainと位相差を求めた。
+\end{enumerate}
+
+\subsubsection{実験1-2}
+\begin{enumerate}
+\item まず、位置出力について測定するため1回転ポテンショメータを用いて、図\ref{fig ex1-2circuit}のように装置を構成した。なお、ポテンショメータはカップリングを用いてサーボモータの回転軸に取り付け、直流電源(小)は5Vに設定し、直流電源(大)とファンクションジェネレータ(FG)の設定は実験1-1と同様にした。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=9cm]{ex1-2circuit.png}
+		\caption{実験1-2の装置構成図}
+		\label{fig ex1-2circuit}
+	\end{center}
+\end{figure}
+\item 次に、オシロスコープのCH1、CH2プローブをそれぞれ図\ref{fig ex1-2circuit}のように接続した。
+\item 最後に、FGの周波数を対数軸上で等間隔になるように2Hz～20Hzの間で5点選び、加えて、その各々の周波数について振幅を3つ選びながら各々の場合について、CH1、CH2両方のpeak to peak電圧とその時間差を測定し、Gainと位相差を求めた。
+\end{enumerate}
+
+\subsubsection{課題2.1}
+\begin{enumerate}
+\item まず、1回転ポテンショメータとタコジェネレータ両方を用いて、図
+\ref{fig homework2-1circuit}のように装置を構成した。なお、直流電源(小)は5Vに設定した。ここで、操作器にはDC/DCコンバータの+15Vの電圧を可変抵抗器に通してから入力した。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=7cm]{homework2-1circuit.png}
+		\caption{課題2.1の装置構成図}
+		\label{fig homework2-1circuit}
+	\end{center}
+\end{figure}
+\item 次に、オシロスコープのCH1、CH2プローブをそれぞれ図\ref{fig homework2-1circuit}のように接続した。
+\item 最後に、可変抵抗を調整してDCサーボモータを定速回転させている状態で、CH1、CH2両方の出力電圧波形を観測した。
+\end{enumerate}
+
+\subsection{使用機器}
+\begin{itemize}
+\setlength{\parskip}{0cm} % 段落間
+\setlength{\itemsep}{0cm} % 項目間
+\item タコジェネレータ付きDCサーボモータ(澤村電気工業 SS40E2-T0) :1台
+\item 操作器：電圧制御型DCサーボモータ・ドライバ((澤村電気工業 MS-100V05) :1台
+\item 1回転5k$\Omega$ポテンショメータ(日本電産コパル電子 J40S) :1個
+\item 10回転10k$\Omega$ポテンショメータ(日本電産コパル電子 M22E10) :1個
+\item カップリング(アサ電子工業) :1個
+\item デジタル・オシロスコープ(IWATSU DS-5110B) :1台
+\item デジタル・オシロスコープのプローブ :2本
+\item ファンクションジェネレータ(TEXIO FGX-2112) :1台
+\item 直流電源(大)(KENWOOD PS36-10) :1台
+\item 直流電源(小)(PR18-1.2A) :1台
+\item DC/DCコンバータ(SUW30515C) :1個
+\item ブレッドボード :1枚
+\item ジャンプワイヤー
+\item ワニ口クリップ
+\end{itemize}
+\subsection{結果}
+まず、実験1-1,1-2で得られた測定結果をボード線図として、Gainの場合をそれぞれ図\ref{fig ex1-1gain},図\ref{fig ex1-2gain}、位相差の場合をそれぞれ図\ref{fig ex1-1phase},図\ref{fig ex1-2phase}として以下に記す。
+\begin{figure}[H]
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex1-1gain.png}
+		\caption{実験1-1(速度制御)のGainのボード線図}
+		\label{fig ex1-1gain}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex1-2gain.png}
+		\caption{実験1-2(位置制御)のGainのボード線図}
+		\label{fig ex1-2gain}
+	\end{center}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex1-1phase.png}
+		\caption{実験1-1(速度制御)の位相差のボード線図}
+		\label{fig ex1-1phase}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex1-2phase.png}
+		\caption{実験1-2(位置制御)の位相差のボード線図}
+		\label{fig ex1-2phase}
+	\end{center}
+	\end{minipage}
+\end{figure}
+
+加えて、課題2.1の結果としては、タコジェネレータの出力波形(CH1)は雑音はあるがほぼ一定値になり、ポテンショメータの出力波形(CH2)は-15Vから+15Vで変化する右上がりのノコギリ波になった。この結果の値をまとめた表を以下に表\ref{tab homework2-1}として記す。
+\begin{table}[H]
+	\begin{center}
+		\caption{課題2.1の結果}
+		\begin{tabular}{|c||c|c|}\hline
+			タコジェネレータ(CH1)&\multicolumn{2}{|c|}{ポテンショメータ(CH2)}\\ \hline
+			出力電圧[V]&出力電圧$V_{pp}$[V]&周期[s]\\ \hline\hline
+			2.8&30&70.4m\\ \hline
+		\end{tabular}
+		\label{tab homework2-1}
+	\end{center}
+\end{table}
+
+\subsection{考察}
+\parindent=0pt{\bf(1)課題2.1}\\
+　初めに$k_{P}$と$k_{E}'$を導出する。まず、$k_{P}$についてだが、原理で述べた1回転ポテンショメータの特性を考慮すると、表\ref{tab homework2-1}とノコギリ波であるという結果より、この測定では$y_{dp}(t)$が-15Vから+15Vの範囲で変化し、その各々が0度から360度に一対一対応していると考えられる。すなわち、360度で30Vの範囲の電圧を出力できると考えると、式(\ref{eq pote})より$k_{P}$は、
+\begin{equation}
+k_{P}=\frac{y_{dp}(t)}{\theta(t)}=\frac{30[V]}{360[度]} \sim 4.8[V/rad]
+\label{eq kp}
+\end{equation}
+と求められる。次に、$k_{E}'$だが、表\ref{tab homework2-1}より回転速度$\omega(t)$は
+\begin{equation}
+\omega(t)=\frac{2\pi}{T}=\frac{2\pi}{70.4m}[rad/s]
+\label{eq wt}
+\end{equation}
+のように一定速度と分かる。この時、$y_{dv}(t)$は表\ref{tab homework2-1}から2.8[V]となる。従って、式(\ref{eq tako})と式(\ref{eq wt})から$k_{E}'$は、
+\begin{equation}
+k_{E}'=\frac{y_{dv}(t)}{\omega(t)}=\frac{2.8[V]}{\frac{2\pi}{70.4m}×\frac{60}{2\pi}[rpm]} \sim 3.3[V/krpm]
+\label{eq kv}
+\end{equation}
+と求められる。なお、カタログ値は$k_{E}'=3[V/krpm]$であるため、導出した$k_{E}'$は妥当だと考えられる。以降で$k_{P}$と$k_{E}'$を用いる際は単位によく注意して用いる必要があることをここで述べておく。すなわち、
+\begin{equation}
+\frac{k_{P}}{k_{E}'} \sim 152[1/s]
+\label{eq kekp}
+\end{equation}
+のようになることに注意する。\\
+\begin{wrapfigure}[16]{r}{6cm}
+	\begin{center}
+		\includegraphics[width=6cm]{pro2-3boad.png}
+		\caption{式(\ref{eq Pvs})の伝達関数のボード線図}
+		\label{fig pro2-3boad}
+	\end{center}
+\end{wrapfigure}
+\parindent=0pt{\bf(2)問題2.3}\\
+　式(\ref{eq TeTm})より、折れ線角周波数の大小は$\frac{1}{T_{M}} \ll \frac{1}{T_{E}}$であることに注意すると、式(\ref{eq Pvs})のボード線図の概形は、右の図\ref{fig pro2-3boad}と考えられる。すなわち、図中の赤線が漸近線であり、青線が理論的な周波数応答である。なお、図\ref{fig pro2-3boad}の段階では、まだ位相の図中にある$\frac{5}{T_{M}}$と$\frac{1}{5T_{E}}$の大小関係などは分からないため、図\ref{fig pro2-3boad}は正確ではない可能性があると考えられる。\\
+\parindent=0pt{\bf(3)課題2.2}\\
+　まず、図9と実験結果である図5～8を比較して、実験結果から$K$,$T_{M}$,$T_{E}$を求めると、\begin{equation}
+K=1\ ,\ T_{E}=\frac{1}{132} \sim 0.0076\ ,\ T_{M}=\frac{1}{28} \sim 0.036
+\label{eq ex-ktetm}
+\end{equation}
+となる。\\
+　ここで、式(\ref{eq kp})と式(\ref{eq kv})から得られる$k_{p}$と$k_{E}'$を用いて、式(\ref{eq P-Pv})から図\ref{fig ex1-2gain},図\ref{fig ex1-2phase}の位置制御の結果を速度制御の結果に換算したグラフと、式(\ref{eq ex-ktetm})の値を使って図\ref{fig pro2-3boad}を描き直したグラフを速度制御の図\ref{fig ex1-1gain}と図\ref{fig ex1-1phase}に重ねて描いたボード線図をそれぞれ図\ref{fig homework2-2gain}、図\ref{fig homework2-2phase}として以下に記す。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=10cm]{homework2-2gain.png}
+		\caption{実験1-2(位置制御)の換算値と、同定によって得られた値を用いた$P_{V}(s)$の周波数応答を実験1-1(速度制御)の結果に重ねて描いた図(Gain)}
+		\label{fig homework2-2gain}
+	\end{center}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=10cm]{homework2-2phase.png}
+		\caption{実験1-2(位置制御)の換算値と、同定によって得られた値を用いた$P_{V}(s)$の周波数応答を実験1-1(速度制御)の結果に重ねて描いた図(位相差)}
+		\label{fig homework2-2phase}
+	\end{center}
+\end{figure}
+　図\ref{fig homework2-2gain}については、実験1-2の換算値は実験1-1とおおよそ一致している。一方で、図\ref{fig homework2-2phase}については、実験1-2の換算値は実験1-1と大幅にずれている。ここで、位相差のみで大幅にずれた要因は実験の測定ミスであると考えられる。すなわち、実験1-1の際にオシロスコープのカップリングをCH1だけACにしてしまったことが要因であると考えられる。実験時間の問題で、Gainに関しては正しく測定し直せたが、位相差の測定はし直せなかったのである。実際、図\ref{fig homework2-2phase}では同定した結果と実験1-2の換算値はおおよそ同じような概形であることが分かる。以下では、このことを踏まえて議論していく。\\
+　まず、Gainの図である図\ref{fig homework2-2gain}の赤線が式(\ref{eq ex-ktetm})の値を用いた時の$P_{V}(s)$の周波数応答であることに注意すると、図\ref{fig homework2-2gain}では測定値のグラフと同定した結果のグラフがずれていることが確認できる。これは、式(\ref{eq ex-ktetm})の値を求める際に実験結果から目測でおおよその値を決めたことと、原理で述べた通り図\ref{fig ex1block}のように外乱を無視して考えていることが主な要因であると考えられる。従って、図\ref{fig homework2-2gain}において、測定結果と同定した結果が一致するようにK,$T_{E}$,$T_{M}$を調整すると、図中の黄色線のように$P_{V}(s)$を同定できた。\\
+　上記の議論で求められた値を用いると位相差の場合も正しく同定されるべきある。しかし、上述のように実験ミスが原因で位相差は、実験1-2の換算値しか正しくないことに注意する。図\ref{fig homework2-2phase}より、上記の議論で求めた同定した後に調整した結果である黄色系列は、実験1-2の換算値とおおよそ一致していることが確認できる。微妙なずれに関しては測定の差の読み取り誤差だと考えられる。\\
+　ここまでの議論より同定の際に用いるK,$T_{E}$,$T_{M}$は以下のように決定される。また、課題で問われている$P(s)$は式(\ref{eq Ps})である。
+\begin{equation}
+K=1\ ,\ T_{E}=0.003\ ,\ T_{M}=0.03
+\label{eq ex2-2-ktetm}
+\end{equation}
+　加えて、式(\ref{eq P-Pv})から図\ref{fig ex1-1gain},図\ref{fig ex1-1phase}の速度制御の結果を位置制御の結果に換算したグラフを、位置制御の図\ref{fig ex1-2gain},図\ref{fig ex1-2phase}に重ねて描く。そのボード線図をそれぞれ図\ref{fig homework2-2gainex}、図\ref{fig homework2-2phaseex}として以下に記す。また、式(\ref{eq ex2-2-ktetm})の値を式(\ref{eq Ps})の$P(s)$に代入したものを図中に黄色系列として記している。
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=9cm]{homework2-2gainex.png}
+		\caption{実験1-1(速度制御)の換算値と、式(\ref{eq ex2-2-ktetm})の値を用いた$P(s)$の周波数応答を実験1-2(位置制御)の結果に重ねて描いた図(Gain)}
+		\label{fig homework2-2gainex}
+	\end{center}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=9cm]{homework2-2phaseex.png}
+		\caption{実験1-1(速度制御)の換算値と、式(\ref{eq ex2-2-ktetm})の値を用いた$P(s)$の周波数応答を実験1-2(位置制御)の結果に重ねて描いた図(位相差)}
+		\label{fig homework2-2phaseex}
+	\end{center}
+\end{figure}
+
+　図\ref{fig homework2-2gainex}、図\ref{fig homework2-2phaseex}より、全てのボード線図を速度制御に統一した際の議論と同様に、Gainに関しては実験1-1も1-2も共に正しく実験がなされており、位相差に関しては上述の通り実験1-1では失敗していることが確認できる。また、式(\ref{eq ex2-2-ktetm})の値を用いて描いた黄色系列に関しては、Gainの方では実験値と換算値にほとんど重なっており、位相差の方では正しく測定のできた実験1-2の系列とはほぼ重なっているため正しく同定がなされていることが確認できた。
+
+
+\section{実験2}
+\subsection{目的}
+　制御用アナログ回路を構成して、理論的に求められるボード線図と実験結果から描かれるボード線図とを比較することが目的である。
+\subsection{原理}
+　今回の実験で用いる回路は、以下に記す図\ref{fig ex2circuita}のような差動増幅器と、図\ref{fig ex2circuitb}のような差動増幅器に反転増幅器を縦続結合したものの2つの回路である。
+\begin{figure}[H]
+	\begin{minipage}{0.35\hsize}
+	\begin{center}
+		\includegraphics[width=5cm]{ex2circuita.png}
+		\caption{「比例ゲイン」の回路図}
+		\label{fig ex2circuita}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.65\hsize}
+	\begin{center}
+		\includegraphics[width=8cm]{ex2circuitb.png}
+		\caption{「比例ゲイン×位相進み要素」の回路図}
+		\label{fig ex2circuitb}
+	\end{center}
+	\end{minipage}
+\end{figure}
+　まず、オペアンプが理想的なものと考えた際のオペアンプの振る舞いについてだが、この際はオペアンプの入力インピーダンスは$\infty$で出力インピーダンスは0と考えられる。これにより、図\ref{fig ex2circuita}で言うところの$v_{-}$と$v_{+}$に「$v_{-}=v_{+}$」の関係が成立する。これを仮想短絡と言う。\\
+　初めに、図\ref{fig ex2circuita}について仮想短絡の考えを使うと入出力特性は、
+\begin{equation}
+v_{out}=K_{Ca}(v_{ref}(t)-v_{in}(t))
+\label{eq circuita}
+\end{equation}
+のようになる。なお、$K_{Ca}$は$R_{1a}$と$R_{2a}$で値が決まる定数ゲインである。ここで、図\ref{fig ex1block}から、$U(s)$,$C(s)$,$R(s)$,$Y_{d}(s)$には
+\begin{equation}
+U(s)=C(s)(R(s)-Y_{d}(s))
+\label{eq ex1block}
+\end{equation}
+のような関係があることに注意すると、式(\ref{eq ex1block})の両辺を逆ラプラス変換した式と式(\ref{eq circuita})は一致することが分かる。すなわち、$U(s)$, $R(s)$, $Y_{d}(s)$を逆ラプラス変換したものを$u(t)$, $r$, $y_{d}(t)$とすると、$v_{in}$を$y_{d}$, $v_{ref}$を$r$, $v_{out}$を$u$とみなせばよい。従って、図\ref{fig ex2circuita}の回路を用いると図\ref{fig ex1block}において
+\begin{equation}
+C(s)=K_{Ca}
+\label{eq circuitaC}
+\end{equation}
+とした、比例ゲインを用いた制御系が実現できる。\\
+　次に、図\ref{fig ex2circuitb}の回路についてだが、コンデンサを含む回路のためs領域で考える。すなわち、一般にコンデンサに流れる電流と印加電圧の関係は、電圧の初期値が0の場合は、
+\begin{equation}
+I(s)=sCV(s)
+\label{eq capacitance}
+\end{equation}
+のようになることを用いる。この際も、図\ref{fig ex2circuita}について上記で考えたことと同様の考えに従うと、図\ref{fig ex2circuitb}の入出力特性は式(\ref{eq ex1block})で$C(s)$を
+\begin{equation}
+C(s)=K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T}
+\label{eq circuitbC}
+\end{equation}
+のようにした式で表される。式(\ref{eq circuitbC})は、比例ゲイン$K_{Cb}$と動的要素の積で表されており、$\alpha<1$の時を位相進み要素と呼ぶ。
+
+\subsection{方法}
+\begin{enumerate}
+\item
+まず、図\ref{fig ex2circuit}のように装置を構成した。なお、制御用アナログ回路は図\ref{fig ex2circuita}のものを用いて適切に接続をして、オシロスコープのプローブも図\ref{fig ex2circuit}のように接続した。また、図\ref{fig ex2circuita}の素子値は、以下の表\ref{tab sositi}のようにした。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=8cm]{ex2circuit.png}
+		\caption{実験2の装置構成図}
+		\label{fig ex2circuit}
+	\end{center}
+\end{figure}
+\item
+次に、直流電源(小)の電圧を5Vに設定し、ファンクションジェネレータのオフセット電圧を0Vにした後に正弦波を入力した。
+\item
+ここまでの設定のままで、周波数を0.2Hzから500Hzの間でボード線図上で等間隔になるよう21点選び、各々の周波数でCH1、CH2両方のpeak to peak電圧とその時間差を測定し、Gainと位相差を求めた。なお、ファンクションジェネレータの振幅は出力が飽和しない程度に毎周波数ごとに調整した。
+\item
+この後、制御用アナログ回路を図\ref{fig ex2circuitb}に変えた。この際の素子値としてはBパターンのものを用いた。すなわち、以下の表\ref{tab sositi}のようにした。
+\item
+最後に、上記と同じ手順でCH1、CH2のpeak to peak電圧とその時間差を測定した。
+\begin{table}[H]
+	\begin{center}
+		\caption{図\ref{fig ex2circuita}と図\ref{fig ex2circuitb}の素子値}
+		\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+			$R_{1a}[k\Omega]$&$R_{2a}[k\Omega]$&$R_{1b}[k\Omega]$&$R_{2b}[k\Omega]$&$R_{3b}[k\Omega]$&$R_{4b}[k\Omega]$&$C_{1}[\mu F]$&$C_{2}[\mu F]$\\ \hline
+			20&300&470&100&2&7.5&10&1\\ \hline
+		\end{tabular}
+		\label{tab sositi}
+	\end{center}
+\end{table}
+\end{enumerate}
+
+\subsection{使用機器}
+\begin{itemize}
+\setlength{\parskip}{0cm} % 段落間
+\setlength{\itemsep}{0cm} % 項目間
+\item デジタル・オシロスコープ(IWATSU DS-5110B) :1台
+\item デジタル・オシロスコープのプローブ :2本
+\item ファンクションジェネレータ(TEXIO FGX-2112) :1台
+\item 直流電源(小)(PR18-1.2A) :1台
+\item DC/DCコンバータ(SUW30515C) :1個
+\item オペアンプ(AD817AN) :3個
+\item 金属皮膜抵抗(誤差$\pm1\%$)\\
+:$20k\Omega$が2個, $300k\Omega$が2個, $470k\Omega$が2個, $100k\Omega$が2個, $2k\Omega$が1個, $7.5k\Omega$が1個
+\item 電解コンデンサ :$10\mu F$が1個, $1\mu F$が1個
+\item ブレッドボード :1枚
+\item ジャンプワイヤー
+\item ワニ口クリップ
+\end{itemize}
+\subsection{結果}
+　制御用アナログ回路が図\ref{fig ex2circuita}と図\ref{fig ex2circuitb}の場合の測定結果を、Gainについてそれぞれ図\ref{fig ex2gaina}, 図\ref{fig ex2gainb}として記す。加えて、位相差についてもそれぞれ図\ref{fig ex2phasea}, 図\ref{fig ex2phaseb}として以下に記す。
+\begin{figure}[H]
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2gainapre.png}
+		\caption{図\ref{fig ex2circuita}のGainのボード線図}
+		\label{fig ex2gainapre}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2gainbpre.png}
+		\caption{図\ref{fig ex2circuitb}のGainのボード線図}
+		\label{fig ex2gainbpre}
+	\end{center}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2phaseapre.png}
+		\caption{図\ref{fig ex2circuita}の位相差のボード線図}
+		\label{fig ex2phaseapre}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2phasebpre.png}
+		\caption{図\ref{fig ex2circuitb}の位相差のボード線図}
+		\label{fig ex2phasebpre}
+	\end{center}
+	\end{minipage}
+\end{figure}
+　ここで、図\ref{fig ex2gainapre}, 図\ref{fig ex2phaseapre}を見るとGainは一定値であり、位相差は0度であり、確かに比例ゲインであることが確認できる。また、図\ref{fig ex2gainbpre}, 図\ref{fig ex2phasebpre}を見ると、グラフの概形より確かに「比例ゲイン×位相進み要素」になっていることが確認できる。
+
+\subsection{考察}
+{\bf(1)問題2.4}\\
+　ここでは、図\ref{fig ex2circuita}の入出力電圧に関して式(\ref{eq circuita})が成立することを確認して、式(\ref{eq circuitaC})の$K_{Ca}$と$R_{1a}$, $R_{2a}$との関係を求める。\\
+　まず、図\ref{fig ex2circuita}について分圧の考えより、$v_{+}$は
+\begin{equation}
+	v_{+}=\frac{R_{2a}}{R_{1a}+R_{2a}}v_{ref}
+	\label{eq pro2-4v+}
+\end{equation}
+である。また、理想的なオペアンプと考えて仮想短絡と式(\ref{eq pro2-4v+})より、
+\begin{equation}
+v_{+}=v_{-}=\frac{R_{2a}}{R_{1a}+R_{2a}}v_{ref}
+\label{eq pro2-4kasou}
+\end{equation}
+についても成立する。この時、オペアンプは理想的と考えると、オペアンプの入力インピーダンスは$0$で出力インピーダンスは$\infty$であるので、図\ref{fig ex2circuita}中の$i(t)$はオペアンプに入らない。従って、電流の方向と電圧の大きさに注意すると、
+\begin{equation}
+	\frac{v_{in}-v_{-}}{i(t)}=R_{1a}
+	\label{eq pro2-4R1a}
+\end{equation}
+\begin{equation}
+	\frac{v_{-}-v_{out}}{i(t)}=R_{2a}
+	\label{eq pro2-4R2a}
+\end{equation}
+の関係が成り立つ。式(\ref{eq pro2-4R1a})と式(\ref{eq pro2-4R2a})から、$i(t)$を消去すると、
+\begin{eqnarray}
+	\frac{v_{in}-v_{-}}{R_{1a}} &=& \frac{v_{-}-v_{out}}{R_{2a}}\\
+	\Leftrightarrow \ \ \ v_{out} \ \ \ &=& \frac{-R_{2a}}{R_{1a}}v_{in}+\frac{R_{1a}+R_{2a}}{R_{1a}}v_{-}
+	\label{eq pro2-4vout}
+\end{eqnarray}
+のように$v_{out}$が求められる。式(\ref{eq pro2-4kasou})を式(\ref{eq pro2-4vout})に代入して$v_{-}$を消去すると、
+\begin{equation}
+	 v_{out}(t) = \frac{R_{2a}}{R_{1a}}(v_{ref}(t)-v_{in}(t)) = K_{Ca}(v_{ref}(t)-v_{in}(t))
+	\label{eq pro2-4vouttrue}
+\end{equation}
+となる。従って、式(\ref{eq pro2-4vouttrue})より、確かに図\ref{fig ex2circuita}の入出力電圧に関して式(\ref{eq circuita})が成立することが分かる。また、$K_{Ca}$は表\ref{tab sositi}を用いて、
+\begin{equation}
+	 K_{Ca} = \frac{R_{2a}}{R_{1a}} = \frac{300k\Omega}{20k\Omega} =15
+	\label{eq pro2-4KCa}
+\end{equation}
+となり、確かに比例ゲインである。\\
+
+{\bf(2)問題2.5}\\
+　ここでは、式(\ref{eq circuitbC})の$K_{Cb}$, $\alpha$, $T$と図\ref{fig ex2circuitb}の素子値との関係を求める。以下ではs領域で議論することに注意する。\\
+　まず、図\ref{fig ex2circuitb}の前段は図\ref{fig ex2circuita}の回路で$v_{ref}$と$v_{in}$を入れ替えて、素子値を変えたものであるので、図\ref{fig ex2circuitb}において$v_{out1}$は式(\ref{eq pro2-4vouttrue})の$v_{out}(t)$において、$v_{ref}$と$v_{in}$を入れ替えて素子値を変えたものと等しくなる。これより、$v_{out}(t)$をラプラス変換したものを$V_{out}(s)$とすると、ここまでの議論より
+\begin{equation}
+	 V_{out1}(s) = \frac{R_{2b}}{R_{1b}}(V_{in}(s)-V_{ref}(s))
+	\label{eq pro2-5vout1}
+\end{equation}
+で表せる。図\ref{fig ex2circuitb}の後段について、仮想短絡の考えを用いると、$v_{+}=0$より
+\begin{equation}
+	 V_{-} = V_{+} = 0
+	\label{eq pro2-5v-}
+\end{equation}
+が成立する。なお、$V_{-}$と$V_{+}$はそれぞれ$v_{-}$と$v_{+}$をラプラス変換したものである。問題2.4と同様に考えると、オペアンプが理想的な時に電流$I(s)$は図\ref{fig ex2circuitb}中のように流れる。すなわち、$R_{3b}$, $C_{1}$の並列回路と、$R_{4b}$, $C_{2}$の並列回路には等しい電流$I(s)$が流れる。従って、式(\ref{eq pro2-5v-})とs領域でのコンデンサの扱いに関する式(\ref{eq capacitance})を考慮すると、以下の式が成り立つ。まず、$R_{3b}$, $C_{1}$の並列回路については、
+\begin{eqnarray}
+	 I(s) &=& (\frac{1}{R_{3b}}+sC_{1})(V_{out1}(s)-V_{-}) \nonumber \\
+	&=& (\frac{1}{R_{3b}}+sC_{1})V_{out1}(s)
+	\label{eq pro2-5leftI}
+\end{eqnarray}
+が成り立つ。また、$R_{4b}$, $C_{2}$の並列回路については、
+\begin{eqnarray}
+	 I(s) &=& (\frac{1}{R_{4b}}+sC_{2})(V_{-}-V_{out}(s)) \nonumber \\
+	&=& -(\frac{1}{R_{4b}}+sC_{2})V_{out}(s)
+	\label{eq pro2-5rightI}
+\end{eqnarray}
+が成り立つ。式(\ref{eq pro2-5leftI})と式(\ref{eq pro2-5rightI})より$I(s)$を消去した後に、式(\ref{eq pro2-5vout1})を用いて$V_{out1}(s)$を消去すると、
+\begin{eqnarray}
+	-(\frac{1}{R_{4b}}+sC_{2})V_{out}(s) &=& (\frac{1}{R_{3b}}+sC_{1})V_{out1}(s)\nonumber \\
+	\Leftrightarrow -(\frac{1}{R_{4b}}+sC_{2})V_{out}(s) &=& (\frac{1}{R_{3b}}+sC_{1})			\frac{R_{2b}}{R_{1b}}(V_{in}(s)-V_{ref}(s))\nonumber \\
+	\Leftrightarrow V_{out}(s) &=& \frac{R_{2b}}{R_{1b}}\frac{ \frac{1}{R_{3b}}+sC_{1} }{ \frac{1}{R_{4b}}+sC_{2} }(V_{ref}(s)-V_{in}(s))
+	\label{eq pro2-5Vout}
+\end{eqnarray}
+のようになる。\\
+　ここで、原理で述べたことに関連するが、$U(s)$, $R(s)$, $Y_{d}(s)$はそれぞれ$V_{out}(s)$, $V_{ref}(s)$, $V_{in}(s)$に相当するので、式(\ref{eq pro2-5Vout})は
+\begin{equation}
+	U(s) = \frac{R_{2b}}{R_{1b}}\frac{ \frac{1}{R_{3b}}+sC_{1} }{ \frac{1}{R_{4b}}+sC_{2} }(R(s)-Y_{d}(s))
+\label{eq pro2-5U}
+\end{equation}
+と書き変えられる。従って、この式(\ref{eq pro2-5U})と式(\ref{eq ex1block})を比較することにより、$C(s)$が分かる。加えて、式(\ref{eq circuitbC})を用いると、
+\begin{eqnarray}
+	K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T} &=& \frac{R_{2b}}{R_{1b}}\frac{ \frac{1}{R_{3b}}+sC_{1} }{ \frac{1}{R_{4b}}+sC_{2} } \nonumber \\
+	&=& \frac{C_{1}R_{2b}}{C_{2}R_{1b}}\frac{ \frac{C_{2}R_{4b}}{C_{1}R_{3b}}(1+sC_{1}R_{3b}) }{ 1+ s\frac{C_{2}R_{4b}}{C_{1}R_{3b}} C_{1}R_{3b} }
+\label{eq pro2-5Cs}
+\end{eqnarray}
+が成立する。従って、式(\ref{eq pro2-5Cs})より$K_{Cb}$, $\alpha$, $T$が定まる。すなわち、表\ref{tab sositi}を用いて、
+\begin{eqnarray}
+	K_{Cb} &=& \frac{C_{1}R_{2b}}{C_{2}R_{1b}} = \frac{10\mu F×100k\Omega}{1\mu F×470k\Omega} \sim 2.13
+	\label{eq pro2-5KCb}\\
+	\alpha &=& \frac{C_{2}R_{4b}}{C_{1}R_{3b}} = \frac{1\mu F×7.5k\Omega}{10\mu F×2k\Omega} = 0.375
+	\label{eq pro2-5alpha}\\
+	T &=& C_{1}R_{3b} = 10\mu F×2k\Omega = 0.02[s]
+	\label{eq pro2-5T}
+\end{eqnarray}
+と定まる。なお、$T$についているsはs領域のsではなく、時間の単位であることに注意する。\\
+
+{\bf(3)課題2.3}\\
+　式(\ref{eq circuitaC})と式(\ref{eq circuitbC})に、問題2.4, 2.5で求めた値を代入することによって、図\ref{fig ex2circuita}と図\ref{fig ex2circuitb}の制御用アナログ回路の周波数特性が理論的に分かる。ここで、図\ref{fig ex2circuita}と図\ref{fig ex2circuitb}の理論的な周波数特性を表すボード線図を実験結果に重ねて以下に記す。すなわち、Gainについてそれぞれ図\ref{fig ex2gaina}, 図\ref{fig ex2gainb}とし、位相差についてそれぞれ図\ref{fig ex2phasea}, 図\ref{fig ex2phaseb}として以下に記す。なお、図\ref{fig ex2phasea}については、実験結果と理論値が完全に一致したため実験結果の系列は見えていない。
+
+\begin{figure}[H]
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2gaina.png}
+		\caption{図\ref{fig ex2circuita}のGainのボード線図}
+		\label{fig ex2gaina}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2gainb.png}
+		\caption{図\ref{fig ex2circuitb}のGainのボード線図}
+		\label{fig ex2gainb}
+	\end{center}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2phasea.png}
+		\caption{図\ref{fig ex2circuita}の位相差のボード線図}
+		\label{fig ex2phasea}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.5\hsize}
+	\begin{center}
+		\includegraphics[width=7cm]{ex2phaseb.png}
+		\caption{図\ref{fig ex2circuitb}の位相差のボード線図}
+		\label{fig ex2phaseb}
+	\end{center}
+	\end{minipage}
+\end{figure}
+
+　まず、図\ref{fig ex2circuita}に関するボード線図である図\ref{fig ex2gaina}
+, 図\ref{fig ex2phasea}に関しては実験結果と理論値がほぼ完全に一致していることが分かり、この実験に関しては正しく測定がなされたと考えられる。\\
+　次に、図\ref{fig ex2circuitb}に関するボード線図である図\ref{fig ex2gainb}
+, 図\ref{fig ex2phaseb}に関しては、概形はあっているもののGainについても位相差についても実験結果が理論値よりも若干大きく表れていることが図から読み取れる。この理由としては、特に位相差については位相差が小さくなればなるほどオシロスコープ上で読み取りが困難になったことが主な要因と考えられる。すなわち読み取りの際の誤差である。加えて、考えられることとしては素子値の誤差であるが、今回使用する抵抗については誤差が$\pm 1 \%$でありそれほど大きな影響がでるとは考えられない。コンデンサについても同様である。これ以外に可能性のありそうな要因としては、オペアンプで増幅が行われた際の誤差が考えられた。実際、Gainのグラフでは全体的に実験結果のほうが理論値よりも大きくなっていることが分かる。従って、図\ref{fig ex2gainb}, 図\ref{fig ex2phaseb}で誤差が生じた要因としては、読み取り誤差とオペアンプの増幅誤差が主な要因と考えられた。
+
+
+\section{実験3}
+\subsection{目的}
+　作成した回路の閉ループ制御系の安定性や過渡応答、定常偏差について調べることが目的である。
+\subsection{原理}
+　今回の実験での閉ループ制御系は、図\ref{fig ex1block}のようになっており、制御対象の伝達関数$P(s)$と制御器の伝達関数$C(s)$が分かっていれば閉ループ伝達関数は
+\begin{equation}
+G=\frac{C(s)P(s)}{1+C(s)P(s)}
+\label{eq transfer function G}
+\end{equation}
+で求めることが出来る。また、簡単のため式(\ref{eq Ps})を
+\begin{equation}
+P(s)=\frac{K×\frac{k_{P}}{k_{E}'}}{s(1+sT_{E})(1+sT_{M})}=\frac{K'}{s(1+sT_{E})(1+sT_{M})}
+\label{eq Ps revise}
+\end{equation}
+と書き直しておく。ここで、式(\ref{eq kekp})より
+\begin{equation}
+K'=152K
+\label{eq K'}
+\end{equation}
+である。加えて、ここまでで求めてきた、以下の実験で使う値をまとめた表を表\ref{tab value}として以下に記す。なお、式(\ref{eq ex2-2-ktetm}),式(\ref{eq pro2-4KCa}),式(\ref{eq pro2-5KCb}),式(\ref{eq pro2-5alpha}),式(\ref{eq pro2-5T}),式(\ref{eq K'})を参照した。
+\begin{table}[H]
+	\begin{center}
+		\caption{実験3で使う値一覧}
+		\begin{tabular}{|c|c|c|c|c|c|c|c|}\hline
+			$T_{E}$ & $T_{M}$ & K & K' & $K_{Ca}$ & $K_{Cb}$ & $\alpha$ & T \\ \hline\hline
+			0.003 & 0.03 & 1 & 152 & 15 & 2.13 & 0.375 & 0.02 \\ \hline
+		\end{tabular}
+		\label{tab value}
+	\end{center}
+\end{table}
+\begin{wraptable}[9]{r}{6cm}
+	\begin{center}
+		\caption{ラウス表の例}
+		\begin{tabular}{|c|cccc|}\hline
+			1&$a_{n}$&$a_{n-2}$&$a_{n-4}$&…\\
+			2&$a_{n-1}$&$a_{n-3}$&$a_{n-5}$&…\\
+			3&x&y&z&…\\
+			…&…&…&…&…\\
+			n+1&…&…&…&…\\ \hline
+		\end{tabular}
+		\label{tab Louth}
+	\end{center}
+\end{wraptable}
+　次に、ラウスの安定判別法について述べる。そもそも系が安定であることの必要十分条件の1つは、閉ループ伝達関数を$\frac{(sの多項式)}{特性多項式}$の形にした際に、特性方程式(\ $(特性多項式)=0$\ )の全ての根の実部が負であることである。従って、ラウスの安定判別法とは、特性方程式の根の実部がすべて負であることを証明するための方法である。具体的な方法としては、特性多項式が\\
+$\Phi(s)=a_{n}s^{n}+a_{n-1}s^{n-1}+…+a_{1}s+a_{0}$\\
+$(\ 必要条件: a_{i}>0(i=1, 2,…, n)\ )$\\
+と表される際に、ラウス表と呼ばれる表\ref{tab Louth}のような表を作成して、ラウス表左端の列の値がすべて正ならば、その特性多項式の根の実部がすべて負であることが証明できるというものである。なお、ラウス表の三行目からは、計算が必要になり、図中で言うと\\
+\begin{equation}
+x=-\frac{1}{a_{n-1}}\left|
+	\begin{array}{cc}
+ 		a_{n} & a_{n-2}\\
+		a_{n-1} & a_{n-3}
+	\end{array}
+	\right|
+\end{equation}
+\begin{equation}
+y=-\frac{1}{a_{n-1}}\left|
+	\begin{array}{cc}
+ 		a_{n} & a_{n-4}\\
+		a_{n-1} & a_{n-5}
+	\end{array}
+	\right|
+\end{equation}
+\begin{equation}
+z=-\frac{1}{a_{n-1}}\left|
+	\begin{array}{cc}
+ 		a_{n} & a_{n-6}\\
+		a_{n-1} & a_{n-7}
+	\end{array}
+	\right|
+\end{equation}
+のように計算でき、四行目でも、二行目と三行目を用いて同様のように計算できる。以降同様に計算して表を埋めていく。\\
+　次に、定常偏差と最終値公式について述べる。まず、偏差とは目標値$r(t)$と制御量$y(t)$の差のことであり、$e(t)=r(t)-y(t)$で求められる。ここで、$t \to \infty$の時の$e(t)$のことを定常偏差と呼ぶ。加えて、最終値公式についてであるが、一般に$f(t)$をラプラス変換したものが$F(s)$である際に以下の公式が成り立つ。
+\begin{equation}
+\lim_{t \to +\infty}f(t)=\lim_{s \to +0}sF(s)
+\label{eq lastvalue}
+\end{equation}
+　ここで注意すべきなのは、最終値公式を使う際には「$F(s)はRe[s]\geq 0にs=0での1位の極は持ってよいが、それ以外の極はすべてRe[s]<0となる$」という条件の下で使うべきであることである。基本的には$F(s)$が安定であればこの条件が使えるため、最終値公式を使う際には安定性に注意する。
+
+\subsection{方法}
+\subsubsection{実験3-1}
+\begin{enumerate}
+\item まず、図\ref{fig ex3-1circuit}のように回路を構成した。なお、制御用アナログ回路には図\ref{fig ex2circuita}を使用して、直流電源(大)の電圧は24V、直流電源(小)の電圧は5Vに設定した。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=9cm]{ex3-1circuit.jpg}
+		\caption{実験3-1の装置構成図}
+		\label{fig ex3-1circuit}
+	\end{center}
+\end{figure}
+\item 10回転ポテンショメータの軸を手で回して目標値設定電圧(10回転ポテンショメータ端子2の電圧)を0.8Vに設定した。
+\item オシロスコープのCH1プローブを$v_{ref}$(目標値電圧)端子にCH2プローブを$v_{in}$(検出信号)端子に接続した後、スイッチをOFFからONに切り替えてステップ応答を観測した。その結果をUSBメモリに保存した。その後スイッチをOFFにした。
+\item 次に、CH2プローブのみを$v_{out}$(制御器出力)端子に接続し直して、スイッチをOFFからONに切り替えてステップ応答を観測した。その結果をUSBメモリに保存した。その後スイッチをOFFにした。
+\item 加えて、制御用アナログ回路を図\ref{fig ex2circuitb}に変えて、上記と同様の手順で2パターンのステップ応答を記録した。なお、目標値設定電圧(10回転ポテンショメータ端子2の電圧)は5Vに設定した。
+\end{enumerate}
+
+\subsubsection{実験3-2}
+\begin{enumerate}
+\item まず、図\ref{fig ex3-2circuit}のように回路を構成した。なお、制御用アナログ回路には図\ref{fig ex2circuita}を使用して、直流電源(大)の電圧は24V、直流電源(小)の電圧は5Vに設定した。
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=9cm]{ex3-2circuit.jpg}
+		\caption{実験3-2の装置構成図}
+		\label{fig ex3-2circuit}
+	\end{center}
+\end{figure}
+\item 10回転ポテンショメータの軸を手で回して目標値設定電圧(10回転ポテンショメータ端子2の電圧)を0.8Vに設定した。
+\item この後、スイッチはOFFのままで、直流電源(大)をONにした。この時、DCサーボモータが回り始め、指で軽く回転軸を抑えて制動をかけてみたが停止しなかったためすぐに、直流電源(大)をOFFにした。
+\item 次に、制御用アナログ回路を図\ref{fig ex2circuitb}に変えて、10回転ポテンショメータの軸を手で回して目標値設定電圧(10回転ポテンショメータ端子2の電圧)を5Vに設定した。
+\item この後、スイッチはOFFのままで、直流電源(大)をONにした。この時、DCサーボモータが回ったがすぐに停止した。そこで、モータの回転軸を指でわずかに回転させたところ、指を離すと元に戻って停止した。
+\item ここで、オシロスコープのCH1プローブを$v_{ref}$(目標値電圧)端子にCH2プローブを$v_{in}$(検出信号)端子に接続した後、スイッチをOFFからONに切り替えてステップ応答を観測した。その結果をUSBメモリに保存した。その後スイッチをOFFにした。
+\item 次に、CH2プローブのみを$v_{out}$(制御器出力)端子に接続し直して、スイッチをOFFからONに切り替えてステップ応答を観測した。その結果をUSBメモリに保存した。その後スイッチをOFFにした。
+\end{enumerate}
+
+\subsubsection{課題2.8}
+\begin{enumerate}
+\item MATLAB上で適切にプログラムを作成して、実験3-1, 3-2の結果のシミュレーションを行った。
+\item 実験結果とシミュレーション結果を比較して合致していることを確認した。
+\end{enumerate}
+
+\subsection{使用機器}
+\begin{itemize}
+\setlength{\parskip}{0cm} % 段落間
+\setlength{\itemsep}{0cm} % 項目間
+\item タコジェネレータ付きDCサーボモータ(澤村電気工業 SS40E2-T0) :1台
+\item 操作器：電圧制御型DCサーボモータ・ドライバ((澤村電気工業 MS-100V05) :1台
+\item 1回転5k$\Omega$ポテンショメータ(日本電産コパル電子 J40S) :1個
+\item 10回転10k$\Omega$ポテンショメータ(日本電産コパル電子 M22E10) :1個
+\item カップリング(アサ電子工業) :1個
+\item デジタル・オシロスコープ(IWATSU DS-5110B) :1台
+\item デジタル・オシロスコープのプローブ :2本
+\item ファンクションジェネレータ(TEXIO FGX-2112) :1台
+\item 直流電源(大)(KENWOOD PS36-10) :1台
+\item 直流電源(小)(PR18-1.2A) :1台
+\item DC/DCコンバータ(SUW30515C) :1個
+\item オペアンプ(AD817AN) :3個
+\item 金属皮膜抵抗(誤差$\pm1\%$)\\
+:$20k\Omega$が2個, $300k\Omega$が2個, $470k\Omega$が2個, $100k\Omega$が2個, $2k\Omega$が1個, $7.5k\Omega$が1個
+\item 電解コンデンサ :$10\mu F$が1個, $1\mu F$が1個
+\item ブレッドボード :1枚
+\item スイッチ :1個
+\item ジャンプワイヤー
+\item ワニ口クリップ
+\end{itemize}
+\subsection{結果}
+　まず、安定性についてまとめた結果の表を以下に表\ref{tab stable}として記す。加えて、結果から求まる定常偏差についてまとめた表についても以下に表\ref{tab teijyou}として記す。
+\begin{table}[H]
+	\begin{center}
+		\caption{実験3-1(速度制御),3-2(位置制御)の実験結果に基づく安定性}
+		\begin{tabular}{|c||c|c|}\hline
+			&制御器が図\ref{fig ex2circuita}の回路&制御器が図\ref{fig ex2circuitb}の回路\\ \hline\hline
+			実験3-1(速度制御)&安定&安定\\ \hline
+			実験3-2(位置制御)&不安定&安定\\ \hline
+		\end{tabular}
+		\label{tab stable}
+	\end{center}
+\end{table}
+
+\begin{table}[H]
+	\begin{center}
+		\caption{実験3-1(速度制御),3-2(位置制御)の実験結果に基づく定常偏差}
+		\begin{tabular}{|c||c|c|}\hline
+			&制御器が図\ref{fig ex2circuita}の回路&制御器が図\ref{fig ex2circuitb}の回路\\ \hline\hline
+			実験3-1(速度制御)&0.075&0.54\\ \hline
+			実験3-2(位置制御)&不安定のため存在しない&0\\ \hline
+		\end{tabular}
+		\label{tab teijyou}
+	\end{center}
+\end{table}
+　次に、実験3-1で得られた波形について記す。制御器が図\ref{fig ex2circuita}の回路の際の結果を、$v_{in}$を測定したものを図\ref{fig ex3-1avin}とし、$v_{out}$を測定したものを図\ref{fig ex3-1avout}として以下に記す。加えて、制御器が図\ref{fig ex2circuitb}の回路の際の結果を、$v_{in}$を測定したものを図\ref{fig ex3-1bvin}とし、$v_{out}$を測定したものを図\ref{fig ex3-1bvout}として以下に記す。なお、考察で使うシミュレーション結果も記述されていることに注意する。
+
+\begin{figure}[H]
+	\begin{minipage}{0.46\hsize}
+	\begin{center}
+		\includegraphics[width=7.5cm]{ex3-1avin.jpg}
+		\caption{実験3-1(速度制御)で制御器が図\ref{fig ex2circuita}の回路の際の、ステップ応答での$v_{in}$, $v_{ref}$}
+		\label{fig ex3-1avin}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.06\hsize}
+		\hspace{2cm}
+	\end{minipage}
+	\begin{minipage}{0.46\hsize}
+	\begin{center}
+		\includegraphics[width=7.5cm]{ex3-1avout.jpg}
+		\caption{実験3-1(速度制御)で制御器が図\ref{fig ex2circuita}の回路の際の、ステップ応答での$v_{out}$, $v_{ref}$}
+		\label{fig ex3-1avout}
+	\end{center}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{minipage}{0.46\hsize}
+	\begin{center}
+		\includegraphics[width=7.5cm]{ex3-1bvin.jpg}
+		\caption{実験3-1(速度制御)で制御器が図\ref{fig ex2circuitb}の回路の際の、ステップ応答での$v_{in}$, $v_{ref}$}
+		\label{fig ex3-1bvin}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.06\hsize}
+		\hspace{2cm}
+	\end{minipage}
+	\begin{minipage}{0.46\hsize}
+	\begin{center}
+		\includegraphics[width=7.5cm,height=4.7cm]{ex3-1bvout.jpg}
+		\caption{実験3-1(速度制御)で制御器が図\ref{fig ex2circuitb}の回路の際の、ステップ応答での$v_{out}$, $v_{ref}$}
+		\label{fig ex3-1bvout}
+	\end{center}
+	\end{minipage}
+\end{figure}
+\ \\
+　この次に、実験3-2で得られた波形について記す。表\ref{tab stable}から分かる通り、制御器が図\ref{fig ex2circuita}の回路の際は閉ループ制御系が不安定のためグラフはない。制御器が図\ref{fig ex2circuitb}の回路の際の結果を、$v_{in}$を測定したものを図\ref{fig ex3-2bvin}とし、$v_{out}$を測定したものを図\ref{fig ex3-2bvout}として以下に記す。なお、考察で使うシミュレーション結果も記述されていることに注意する。
+
+\begin{figure}[H]
+	\begin{minipage}{0.46\hsize}
+	\begin{center}
+		\includegraphics[width=7.5cm]{ex3-2bvin.jpg}
+		\caption{実験3-2(位置制御)で制御器が図\ref{fig ex2circuitb}の回路の際の、ステップ応答での$v_{in}$, $v_{ref}$}
+		\label{fig ex3-2bvin}
+	\end{center}
+	\end{minipage}
+	\begin{minipage}{0.06\hsize}
+		\hspace{2cm}
+	\end{minipage}
+	\begin{minipage}{0.46\hsize}
+	\begin{center}
+		\includegraphics[width=7.5cm]{ex3-2bvout.jpg}
+		\caption{実験3-2(位置制御)で制御器が図\ref{fig ex2circuitb}の回路の際の、ステップ応答での$v_{out}$, $v_{ref}$}
+		\label{fig ex3-2bvout}
+	\end{center}
+	\end{minipage}
+\end{figure}
+　ここで、図\ref{fig ex3-1avin}～図\ref{fig ex3-2bvout}のどのグラフでも$v_{in}$と$v_{out}$は十分に時間が経つと一定値に収束しているため、表\ref{tab stable}の通り安定な系であることが確認できる。
+\subsection{考察}
+{\bf(1)課題2.4}\\
+　ここでは、速度制御の際の閉ループ制御系の安定性を考える。まず、制御器の回路が図\ref{fig ex2circuita}の場合であるが、$P_{V}(s)$は式(\ref{eq Pvs})で与えられ、$C(s)$は式(\ref{eq circuitaC})から分かる。この際の閉ループ伝達関数を$G_{aV}(s)$と置くと、$G_{aV}(s)$は式(\ref{eq transfer function G})を用いると以下のようになる。
+\begin{eqnarray}
+G_{aV}(s)&=&\frac{C(s)P_{V}(s)}{1+C(s)P_{V}(s)}=\frac{K_{Ca} \frac{K}{(1+sT_{E})(1+sT_{M})} }{1+K_{Ca} \frac{K}{(1+sT_{E})(1+sT_{M})} } \nonumber\\
+&=&\frac{KK_{Ca}}{T_{E}T_{M}s^{2} + (T_{E}+T_{M})s + 1+KK_{Ca}}
+\label{eq GaV}
+\end{eqnarray}
+\begin{wraptable}[11]{r}{6cm}
+	\begin{center}
+		\caption{$G_{aV}(s)$の分母多項式のラウス表}
+		\begin{tabular}{|c|ccc|}\hline
+			1&$T_{E}T_{M}$&$1+KK_{Ca}$&0\\
+			2&$T_{E}+T_{M}$&0&0\\
+			3&$1+KK_{Ca}$&0&0\\ 	\hline
+		\end{tabular}
+		\label{tab GaV}
+	\end{center}
+\end{wraptable}
+　従って、式(\ref{eq GaV})の分母多項式についてラウスの安定判別法を使うと表\ref{tab GaV}のようなラウス表になる。原理に述べた方法より、表\ref{tab GaV}と表\ref{tab value}の値を用いると、
+\begin{equation}
+T_{E}T_{M}=9×10^{-5}>0
+\end{equation}
+\begin{equation}
+T_{E}+T_{M}=0.033>0
+\end{equation}
+\begin{equation}
+1+KK_{Ca}=16>0
+\end{equation}
+となるので、$G_{aV}(s)$で表される閉ループ伝達関数は安定である。表\ref{tab stable}より、これは実験結果と合致する。\\
+　次に、制御器の回路が図\ref{fig ex2circuitb}の場合での速度制御を考える。$P_{V}(s)$は式(\ref{eq Pvs})で与えられ、$C(s)$は式(\ref{eq circuitbC})から分かる。この際の閉ループ伝達関数を$G_{bV}(s)$と置くと、$G_{bV}(s)$は式(\ref{eq transfer function G})を用いると以下のようになる。
+\scriptsize
+\begin{eqnarray}
+G_{bV}(s)&=&\frac{C(s)P_{V}(s)}{1+C(s)P_{V}(s)}=\frac{ K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T} \frac{K}{(1+sT_{E})(1+sT_{M})} }{ 1+K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T} \frac{K}{(1+sT_{E})(1+sT_{M})} } \nonumber\\
+&=&\frac{\alpha TKK_{Cb}s+\alpha KK_{Cb}}{ T_{E}T_{M}\alpha T s^{3} + \{ \alpha T(T_{E}+T_{M}) + T_{E}T_{M} \}s^{2} + \{ T_{E}+T_{M} + \alpha T(1+KK_{Cb}) \}s + 1+ KK_{Cb}\alpha}
+\label{eq GbV}
+\end{eqnarray}
+\normalsize
+　従って、式(\ref{eq GbV})の分母多項式についてラウスの安定判別法を使うと表\ref{tab GbV}のようなラウス表になる。なお、表\ref{tab GbV}中の$x'$は\\
+\begin{equation}
+x'=-\frac{T_{E}T_{M}\alpha T(1+ KK_{Cb}\alpha) - \{ \alpha T(T_{E}+T_{M}) + T_{E}T_{M} \}\{ T_{E}+T_{M} + \alpha T(1+KK_{Cb}) \}}{ \alpha T(T_{E}+T_{M}) + T_{E}T_{M} }
+\end{equation}
+である。
+\begin{table}[H]
+	\begin{center}
+		\caption{$G_{aV}(s)$の分母多項式のラウス表}
+		\begin{tabular}{|c|ccc|}\hline
+			1&$T_{E}T_{M}\alpha T$&$T_{E}+T_{M} + \alpha T(1+KK_{Cb})$&0\\
+			2&$\alpha T(T_{E}+T_{M}) + T_{E}T_{M}$ & $1+ KK_{Cb} \alpha$&0\\
+			3&$x'$&0&0\\
+			4&$1+ KK_{Cb}\alpha$&0&0\\ \hline
+		\end{tabular}
+		\label{tab GbV}
+	\end{center}
+\end{table}
+　原理に述べた方法より、表\ref{tab GbV}と表\ref{tab value}の値を用いると、
+\begin{equation}
+T_{E}T_{M}\alpha T \sim 6.8×10^{-7}>0
+\end{equation}
+\begin{equation}
+\alpha T(T_{E}+T_{M}) + T_{E}T_{M} \sim 3.4×10^{-4}>0
+\end{equation}
+\begin{equation}
+x'\sim 5.3×10^{-2}>0
+\end{equation}
+\begin{equation}
+1+KK_{Cb}\alpha \sim 1.8>0
+\end{equation}
+となるので、$G_{bV}(s)$で表される閉ループ伝達関数は安定である。表\ref{tab stable}より、これは実験結果と合致する。\\
+
+{\bf(2)課題2.5}\\
+　ここでは、$v_{ref}$と$v_{in}$との間の定常偏差を理論的に求めていく。まず、制御器の回路が図\ref{fig ex2circuita}の場合であるが、$v_{ref}$が$R(s)$, $v_{in}$が$Y_{d}(s)$にあたり、$Y_{d}(s)=R(s)G_{aV}(s)$であることより、偏差$e(t)$をラプラス変換したものである$E(s)$は
+\begin{eqnarray}
+E_{aV}(s)&=&R(s)-Y_{d}(s) \nonumber\\
+&=&R(s)(1-G_{aV}(s))
+\label{eq EaVs}
+\end{eqnarray}
+となる。なお、この場合の偏差のラプラス変換を$E_{aV}(s)$とおいた。ここで、入力信号はステップ信号より$r(t)=1$と考えると、ラプラス変換より$R(s)=\frac{1}{s}$となる。このことを踏まえた上で、課題2.4より$G_{aV}(s)$は安定であり、$R(s)$も原点に1位の極しか持たないので、原理より式(\ref{eq EaVs})に対して最終値公式を適用できる。よって最終値公式を用いると、以下のようになる。なお、$G_{aV}(s)$は式(\ref{eq GaV})であることに注意して、値に関しては表\ref{tab value}を参考にした。
+\begin{eqnarray}
+\lim_{t \to \infty}e(t)&=&\lim_{s \to 0}sE_{aV}(s)\nonumber\\
+&=&\lim_{s \to 0}s×\frac{1}{s}(1-G_{aV}(s))\nonumber\\
+&=&\lim_{s \to 0}(1-G_{aV}(s))\nonumber\\
+&=&1-\frac{KK_{Ca}}{1+KK{Ca}}\sim0.0625
+\label{eq etaV}
+\end{eqnarray}
+　実験結果での定常偏差は表\ref{tab teijyou}より、0.075であるので誤差は
+\begin{equation}
+\frac{0.075-0.0625}{0.0625}×100=20.0[\%]
+\end{equation}
+となる。このような誤差がでてしまった理由としては外乱の影響であると考えられた。加えて、実験値から定常偏差を読み取る際の読み取り誤差の影響も大きいように考えられる。しかしながら、オーダとしては一致しているので実験は成功したといえる。\\
+　次に、制御器の回路が図\ref{fig ex2circuitb}の場合であるが、基本的には上記の方法と同様に計算すればよい。これより$E(s)$は
+\begin{eqnarray}
+E_{bV}(s)&=&R(s)(1-G_{bV}(s))
+\label{eq EbVs}
+\end{eqnarray}
+となる。なお、この場合の偏差のラプラス変換を$E_{bV}(s)$とおいた。ここで、課題2.4より$G_{bV}(s)$は安定であり、$R(s)$も原点に1位の極しか持たないので、原理より式(\ref{eq EbVs})に対して最終値公式を適用できる。よって最終値公式を用いると、以下のようになる。なお、$G_{bV}(s)$は式(\ref{eq GbV})であることに注意して、値に関しては表\ref{tab value}を参考にした。
+\begin{eqnarray}
+\lim_{t \to \infty}e(t)&=&\lim_{s \to 0}sE_{bV}(s)\nonumber\\
+&=&\lim_{s \to 0}s×\frac{1}{s}(1-G_{bV}(s))\nonumber\\
+&=&\lim_{s \to 0}(1-G_{bV}(s))\nonumber\\
+&=&1-\frac{K\alpha K_{Cb}}{1+K\alpha K{Cb}}\sim0.56
+\label{eq etbV}
+\end{eqnarray}
+　実験結果での定常偏差は表\ref{tab teijyou}より、0.54であるので誤差は
+\begin{equation}
+\frac{0.56-0.54}{0.56}×100\sim3.57[\%]
+\end{equation}
+となる。この誤差に関しての理由は上述のものと同様で外乱の影響であると考えられた。しかし、誤差としては小さいので実験は成功したといえる。\\
+
+{\bf(3)課題2.6}\\
+　ここでは、位置制御の際の閉ループ制御系の安定性を考える。まず、制御器の回路が図\ref{fig ex2circuita}の場合であるが、$P(s)$は式(\ref{eq Ps revise})で与えられ、$C(s)$は式(\ref{eq circuitaC})から分かる。この際の閉ループ伝達関数を$G_{aP}(s)$と置くと、$G_{aP}(s)$は式(\ref{eq transfer function G})を用いると以下のようになる。
+\begin{eqnarray}
+G_{aP}(s)&=&\frac{C(s)P(s)}{1+C(s)P(s)}=\frac{K_{Ca} \frac{K'}{s(1+sT_{E})(1+sT_{M})} }{ 1 + K_{Ca} \frac{K'}{s(1+sT_{E})(1+sT_{M})} } \nonumber\\
+&=&\frac{K'K_{Ca}}{T_{E}T_{M}s^{3} + (T_{E}+T_{M})s^{2} + s +K'K_{Ca}}
+\label{eq GaP}
+\end{eqnarray}
+\begin{wraptable}[11]{r}{6cm}
+	\begin{center}
+		\caption{$G_{aP}(s)$の分母多項式のラウス表}
+		\begin{tabular}{|c|ccc|}\hline
+			1&$T_{E}T_{M}$&$1$&0\\
+			2&$T_{E}+T_{M}$&$K'K_{Ca}$&0\\
+			3&$x''$&0&0\\
+			4&$y''$&0&0\\ \hline
+		\end{tabular}
+		\label{tab GaP}
+	\end{center}
+\end{wraptable}
+　従って、式(\ref{eq GaP})の分母多項式についてラウスの安定判別法を使うと表\ref{tab GaP}のようなラウス表になる。なお、表\ref{tab GaP}中の$x''$, $y''$は\\
+\begin{equation}
+x''= -\frac{T_{E}T_{M}K'K_{Ca}-T_{E}+T_{M}}{T_{E}+T_{M}}
+\end{equation}
+\begin{equation}
+y''= -\frac{0-x''K'K_{Ca}}{x''}=K'K_{Ca}
+\end{equation}
+である。
+　原理に述べた方法よりラウス表の左端の正負を調べる。表\ref{tab GaP}と表\ref{tab value}の値を用いると、
+\begin{equation}
+T_{E}T_{M}=9×10^{-5}>0
+\end{equation}
+\begin{equation}
+T_{E}+T_{M}=0.033>0
+\end{equation}
+\begin{equation}
+x''\sim -5.2 <0
+\end{equation}
+\begin{equation}
+y''=2280>0
+\end{equation}
+となるので、$G_{aP}(s)$で表される閉ループ伝達関数は不安定である。表\ref{tab stable}より、これは実験結果と合致する。\\
+　次に、制御器の回路が図\ref{fig ex2circuitb}の場合での速度制御を考える。$P(s)$は式(\ref{eq Ps revise})で与えられ、$C(s)$は式(\ref{eq circuitbC})から分かる。この際の閉ループ伝達関数を$G_{bP}(s)$と置くと、$G_{bP}(s)$は式(\ref{eq transfer function G})を用いると以下のようになる。
+\scriptsize
+\begin{eqnarray}
+G_{bP}(s)&=&\frac{C(s)P(s)}{1+C(s)P(s)}=\frac{ K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T} \frac{K'}{s(1+sT_{E})(1+sT_{M})} }{ 1+K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T} \frac{K'}{s(1+sT_{E})(1+sT_{M})} } \nonumber\\
+&=&\frac{K_{Cb}K'\alpha Ts+K_{Cb}K' \alpha}{ T_{E}T_{M}\alpha T s^{4} + \{ \alpha T(T_{E}+T_{M}) + T_{E}T_{M} \}s^{3} + (T_{E}+T_{M} + \alpha T)s + (1+ K'K_{Cb}\alpha T)s + K'K_{Cb}\alpha}
+\label{eq GbP}
+\end{eqnarray}
+\normalsize
+　従って、式(\ref{eq GbP})の分母多項式についてラウスの安定判別法を使うと表\ref{tab GbP}のようなラウス表になる。なお、表\ref{tab GbP}中の$w'''$, $x'''$, $y'''$, $z'''$は\\
+\begin{equation}
+w'''=-\frac{(T_{E}T_{M}\alpha T)(1+ K'K_{Cb} \alpha T)-(T_{E}+T_{M} + \alpha T)\{\alpha T(T_{E}+T_{M}) + T_{E}T_{M}\}}{\alpha T(T_{E}+T_{M}) + T_{E}T_{M}}
+\end{equation}
+\begin{equation}
+x'''=-\frac{0-(K'K_{Cb}\alpha)(\alpha T(T_{E}+T_{M}) + T_{E}T_{M})}{\alpha T(T_{E}+T_{M}) + T_{E}T_{M}}=K'K_{Cb}\alpha
+\end{equation}
+\begin{equation}
+y'''=-\frac{(\alpha T(T_{E}+T_{M}) + T_{E}T_{M})x'''-(1+ K'K_{Cb} \alpha T)w'''}{w'''}
+\end{equation}
+\begin{equation}
+z'''=-\frac{0-x'''y'''}{y'''}=x'''
+\end{equation}
+である。
+\begin{table}[H]
+	\begin{center}
+		\caption{$G_{bP}(s)$の分母多項式のラウス表}
+		\begin{tabular}{|c|cccc|}\hline
+			1&$T_{E}T_{M}\alpha T$&$T_{E}+T_{M} + \alpha T$&$K'K_{Cb}\alpha$&0\\
+			2&$\alpha T(T_{E}+T_{M}) + T_{E}T_{M}$ & $1+ K'K_{Cb} \alpha T$&0&0\\
+			3&$w'''$&$x'''$&0&0\\
+			4&$y'''$&0&0&0\\
+ 			5&$z'''$&0&0&0\\ \hline
+		\end{tabular}
+		\label{tab GbP}
+	\end{center}
+\end{table}
+　原理に述べた方法よりラウス表の左端の値について、表\ref{tab GbP}と表\ref{tab value}の値を用いると、
+\begin{equation}
+T_{E}T_{M}\alpha T \sim 6.8×10^{-7}>0
+\end{equation}
+\begin{equation}
+\alpha T(T_{E}+T_{M}) + T_{E}T_{M} \sim 3.4×10^{-4}>0
+\end{equation}
+\begin{equation}
+w'''\sim 3.4×10^{-2}>0
+\end{equation}
+\begin{equation}
+y'''\sim 3.8×10^{-2}>0
+\end{equation}
+\begin{equation}
+z'''\sim 1.2×10^{2}>0
+\end{equation}
+となるので、$G_{bP}(s)$で表される閉ループ伝達関数は安定である。表\ref{tab stable}より、これは実験結果と合致する。\\
+
+{\bf(4)課題2.7}\\
+　ここでは、課題2.5と同様に定常偏差を理論的に求めていく。まず、制御器の回路が図\ref{fig ex2circuita}の場合であるが、課題2.6より$G_{aP}(s)$は不安定であるため偏差は発散してしまう。従って定常偏差は存在しない。\\
+　次に、制御器の回路が図\ref{fig ex2circuitb}の場合であるが、偏差$e(t)$をラプラス変換したものである$E(s)$は
+\begin{eqnarray}
+E_{bP}(s)&=&R(s)(1-G_{bP}(s))
+\label{eq EbPs}
+\end{eqnarray}
+となる。なお、この場合の偏差のラプラス変換を$E_{bP}(s)$とおいた。ここで、課題2.6より$G_{bP}(s)$は安定であり、$R(s)$も原点に1位の極しか持たないので、原理より式(\ref{eq EbPs})に対して最終値公式を適用できる。よって最終値公式を用いると、以下のようになる。なお、$G_{bP}(s)$は式(\ref{eq GbP})であることに注意して、値に関しては表\ref{tab value}を参考にした。
+\begin{eqnarray}
+\lim_{t \to \infty}e(t)&=&\lim_{s \to 0}sE_{bP}(s)\nonumber\\
+&=&\lim_{s \to 0}s×\frac{1}{s}(1-G_{bP}(s))\nonumber\\
+&=&\lim_{s \to 0}(1-G_{bP}(s))\nonumber\\
+&=&1-1=0
+\label{eq etbV}
+\end{eqnarray}
+　実験結果での定常偏差は表\ref{tab teijyou}より、0であるので完全に一致する。これより実験は成功したといえる。\\
+
+{\bf(5)課題2.8}\\
+　MATLABで作成したシミュレーション結果と実験結果を重ねたグラフはすでに図\ref{fig ex3-1avin}～図\ref{fig ex3-2bvout}に記した。図\ref{fig ex3-1avin}～図\ref{fig ex3-2bvout}を見ると、安定性に関しては実験結果とシミュレーション結果で一致している。過渡応答と定常偏差についてだが、図\ref{fig ex3-1bvin}～図\ref{fig ex3-2bvout}に関しては、グラフを見ても分かる通り過渡応答と定常偏差はおおよそ合致している。また、グラフのずれに関しては、シミュレーションでは考慮されていない外乱の影響が実験結果では出ているため、シミュレーションよりも実験結果が多少大きい値であると考えられた。これらの実験に関しては成功しているといえる。\\
+　一方で、図\ref{fig ex3-1avin}と図\ref{fig ex3-1avout}についてであるが、確かに概形は一致しているが、波形の立ち上がりに負の電圧のバイアスがかかってしまっている。この結果については、使用したスイッチが理想的ではなくOFFからONに切り替わる瞬間にどうしても回路が開放になってしまうことが原因だと考えられた。これの改善策としては、スイッチングをできるだけ速くすることであるが、あまり改善は望めなかった。\\
+　まず、図\ref{fig ex3-1avin}については定常偏差の面では実験結果とシミュレーション結果は合致している。過渡応答に関しては、$v_{in}$について理論値(シミュレーション結果)の波形に比べて、実験結果が収束が遅くなっている。このことに関しては、そもそもの目標値電圧が0.8Vであることが要因であるように考えられる。ここで、目標値電圧をこれより大きくしてしまうと、オペアンプが飽和してしまいオペアンプの非線形性が現れてしまうため不適切であり、逆にこれより電圧を小さくするとさらに悪い結果となってしまうためこれが限界であった。\\
+　次に、図\ref{fig ex3-1avout}については上述の通りの負電圧のバイアスの影響で実験値の$v_{ref}$が、なぜか一度負電圧で一定値をとった後に0Vに収束してしまっている。実験値においての定常偏差は0になっており、実験値とシミュレーションは合致していると考えられた。また、過渡応答についても外乱の影響がある程度でおおよそ実験値とシミュレーションは合致していた。\\
+　以上の議論より、実験3に関しては、安定性,定常偏差,過渡応答の面から分かるように適切に実験がなされたと考えられる。
+
+\begin{thebibliography}{3}
+\bibitem{mondai}荒木光彦,「古典制御理論[基礎編]」,培風館
+\end{thebibliography}
+
+\end{document}
