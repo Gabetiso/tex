@@ -9,7 +9,7 @@
 \begin{document}
 \section{実験1}
 \subsection{目的}
-制御対象であるDCサーボモータの周波数応答を測定して、その結果から伝達関数を同定することが目的である。
+制御対象であるDCサーボモータの周波数応答を測定し、その結果から伝達関数を同定することが目的である。
 \subsection{原理}
 まず、測定の際の位相差の導出についてだが、位相差は入出力波形の時間差から求められ、
 \begin{equation}
@@ -344,7 +344,7 @@ C(s)=K_{Cb}\frac{\alpha(1+sT)}{1+s\alpha T}
 \item DC/DCコンバータ(SUW30515C) :1個
 \item オペアンプ(AD817AN) :3個
 \item 金属皮膜抵抗(誤差$\pm1\%$)\\
-:$20k\Omega$が2個, $300k\Omega$が2個, $470k\Omega$が2個, $100k\Omega$が2個, $2k\Omega$が1個, $7.5k\Omega$が1個 
+:$20k\Omega$が2個, $300k\Omega$が2個, $470k\Omega$が2個, $100k\Omega$が2個, $2k\Omega$が1個, $7.5k\Omega$が1個
 \item 電解コンデンサ :$10\mu F$が1個, $1\mu F$が1個
 \item ブレッドボード :1枚
 \item ジャンプワイヤー
@@ -423,7 +423,7 @@ v_{+}=v_{-}=\frac{R_{2a}}{R_{1a}+R_{2a}}v_{ref}
 となる。従って、式(\ref{eq pro2-4vouttrue})より、確かに図\ref{fig ex2circuita}の入出力電圧に関して式(\ref{eq circuita})が成立することが分かる。また、$K_{Ca}$は表\ref{tab sositi}を用いて、
 \begin{equation}
 	 K_{Ca} = \frac{R_{2a}}{R_{1a}} = \frac{300k\Omega}{20k\Omega} =15
-	\label{eq pro2-4KCa} 
+	\label{eq pro2-4KCa}
 \end{equation}
 となり、確かに比例ゲインである。\\
 
@@ -476,7 +476,7 @@ v_{+}=v_{-}=\frac{R_{2a}}{R_{1a}+R_{2a}}v_{ref}
 	\label{eq pro2-5KCb}\\
 	\alpha &=& \frac{C_{2}R_{4b}}{C_{1}R_{3b}} = \frac{1\mu F×7.5k\Omega}{10\mu F×2k\Omega} = 0.375
 	\label{eq pro2-5alpha}\\
-	T &=& C_{1}R_{3b} = 10\mu F×2k\Omega = 0.02[s] 
+	T &=& C_{1}R_{3b} = 10\mu F×2k\Omega = 0.02[s]
 	\label{eq pro2-5T}
 \end{eqnarray}
 と定まる。なお、$T$についているsはs領域のsではなく、時間の単位であることに注意する。\\
@@ -661,7 +661,7 @@ z=-\frac{1}{a_{n-1}}\left|
 \item DC/DCコンバータ(SUW30515C) :1個
 \item オペアンプ(AD817AN) :3個
 \item 金属皮膜抵抗(誤差$\pm1\%$)\\
-:$20k\Omega$が2個, $300k\Omega$が2個, $470k\Omega$が2個, $100k\Omega$が2個, $2k\Omega$が1個, $7.5k\Omega$が1個 
+:$20k\Omega$が2個, $300k\Omega$が2個, $470k\Omega$が2個, $100k\Omega$が2個, $2k\Omega$が1個, $7.5k\Omega$が1個
 \item 電解コンデンサ :$10\mu F$が1個, $1\mu F$が1個
 \item ブレッドボード :1枚
 \item スイッチ :1個
@@ -705,7 +705,7 @@ z=-\frac{1}{a_{n-1}}\left|
 	\end{minipage}
 	\begin{minipage}{0.06\hsize}
 		\hspace{2cm}
-	\end{minipage}	
+	\end{minipage}
 	\begin{minipage}{0.46\hsize}
 	\begin{center}
 		\includegraphics[width=7.5cm]{ex3-1avout.jpg}
@@ -725,7 +725,7 @@ z=-\frac{1}{a_{n-1}}\left|
 	\end{minipage}
 	\begin{minipage}{0.06\hsize}
 		\hspace{2cm}
-	\end{minipage}	
+	\end{minipage}
 	\begin{minipage}{0.46\hsize}
 	\begin{center}
 		\includegraphics[width=7.5cm,height=4.7cm]{ex3-1bvout.jpg}
@@ -747,7 +747,7 @@ z=-\frac{1}{a_{n-1}}\left|
 	\end{minipage}
 	\begin{minipage}{0.06\hsize}
 		\hspace{2cm}
-	\end{minipage}	
+	\end{minipage}
 	\begin{minipage}{0.46\hsize}
 	\begin{center}
 		\includegraphics[width=7.5cm]{ex3-2bvout.jpg}
@@ -879,7 +879,7 @@ G_{aP}(s)&=&\frac{C(s)P(s)}{1+C(s)P(s)}=\frac{K_{Ca} \frac{K'}{s(1+sT_{E})(1+sT_
 		\begin{tabular}{|c|ccc|}\hline
 			1&$T_{E}T_{M}$&$1$&0\\
 			2&$T_{E}+T_{M}$&$K'K_{Ca}$&0\\
-			3&$x''$&0&0\\ 	
+			3&$x''$&0&0\\
 			4&$y''$&0&0\\ \hline
 		\end{tabular}
 		\label{tab GaP}
@@ -936,7 +936,7 @@ z'''=-\frac{0-x'''y'''}{y'''}=x'''
 			1&$T_{E}T_{M}\alpha T$&$T_{E}+T_{M} + \alpha T$&$K'K_{Cb}\alpha$&0\\
 			2&$\alpha T(T_{E}+T_{M}) + T_{E}T_{M}$ & $1+ K'K_{Cb} \alpha T$&0&0\\
 			3&$w'''$&$x'''$&0&0\\
-			4&$y'''$&0&0&0\\ 
+			4&$y'''$&0&0&0\\
  			5&$z'''$&0&0&0\\ \hline
 		\end{tabular}
 		\label{tab GbP}
